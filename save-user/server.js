@@ -86,6 +86,71 @@ app.get("/user/:id", async (req, res) => {
   }
 });
 
+// update user---
+app.put("/user/update/:id", async (req, res) => {
+  try {
+    let { id } = req.params;
+
+    if (!id) {
+      return res.json({
+        message: "Id not found",
+      });
+    }
+
+    let { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.json({
+        message: "All fields are required",
+      });
+    }
+
+    let updatedUser = await UserModel.findByIdAndUpdate(
+      id,
+      {
+        name,
+        email,
+        password,
+      },
+      {
+        new: true,
+      }
+    );
+
+    return res.json({
+      message: "user updated",
+      user: updatedUser,
+    });
+  } catch (error) {
+    return res.json({
+      message: "Internal server error",
+      error,
+    });
+  }
+});
+
+app.delete("/user/delete/:id", async (req, res) => {
+  try {
+    let { id } = req.params;
+    if (!id) {
+      return res.json({
+        message: "Id not found! unauthorized user",
+      });
+    }
+
+    await UserModel.findByIdAndDelete(id);
+
+    return res.json({
+      message: "User deleted",
+    });
+  } catch (error) {
+    return res.json({
+      message: "Internal server error",
+      error,
+    });
+  }
+});
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
