@@ -15,9 +15,9 @@ const App = () => {
     }
   };
 
-  useEffect(() => {
-    getUsers();
-  }, []);
+  // useEffect(() => {
+  //   getUsers();
+  // }, []);
 
   const handleChange = (e) => {
     let { name, value } = e.target;
@@ -29,7 +29,9 @@ const App = () => {
       e.preventDefault();
       console.log(formData);
 
-      let res = await axios.post("http://localhost:3000/register", formData);
+      let res = await axios.post("http://localhost:3000/register", formData, {
+        withCredentials: true,
+      });
       console.log(res);
     } catch (error) {
       console.log("error in api->", error);
