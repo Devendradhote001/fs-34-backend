@@ -38,6 +38,18 @@ const App = () => {
     }
   };
 
+  const handleLoginForm = async (e) => {
+    try {
+      e.preventDefault();
+      let res = await axios.post("http://localhost:3000/login", formData, {
+        withCredentials: true,
+      });
+      console.log(res);
+    } catch (error) {
+      console.log("error in login api", error);
+    }
+  };
+
   return (
     <div>
       <h1>Registration</h1>
@@ -67,6 +79,24 @@ const App = () => {
           placeholder="Mobile"
         />
         <button>Create</button>
+      </form>
+
+      <h1>Login form</h1>
+      <form onSubmit={handleLoginForm} action="">
+        <input
+          onChange={handleChange}
+          name="email"
+          type="text"
+          placeholder="email"
+        />
+        <input
+          onChange={handleChange}
+          name="password"
+          type="text"
+          placeholder="password"
+        />
+
+        <button>Login</button>
       </form>
 
       <div>
