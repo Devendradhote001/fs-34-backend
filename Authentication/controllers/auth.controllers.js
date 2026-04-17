@@ -47,8 +47,47 @@ let registerController = async (req, res) => {
   }
 };
 
-let loginController = (req, res) => {
-  res.send("login");
+let loginController = async (req, res) => {
+  try {
+    let { email, password } = req.body;
+
+    if (!email || !password)
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+
+    let user = await UserModel.findOne({ email });
+
+    if (!user)
+      return res.status(404).json({
+        message: "User not found",
+      });
+
+    let checkPass = await bcrypt.compare(password, user.password);
+
+    if (!checkPass)
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+
+    let token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.cookie("token", token);
+
+    return res.status(200).json({
+      success: true,
+      message: "User loggedin",
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error,
+    });
+  }
 };
 
 module.exports = {
