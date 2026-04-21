@@ -11,6 +11,7 @@ let authMiddleware = async (req, res, next) => {
       });
 
     let decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log("decode->", decode);
 
     if (!decode)
       return res.status(401).json({
@@ -23,6 +24,10 @@ let authMiddleware = async (req, res, next) => {
     next();
   } catch (error) {
     console.log("error in middleware", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error,
+    });
   }
 };
 

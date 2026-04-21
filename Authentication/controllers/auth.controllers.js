@@ -90,7 +90,31 @@ let loginController = async (req, res) => {
   }
 };
 
+let logoutController = async (req, res) => {
+  try {
+    let user_id = req.user._id;
+
+    if (!user_id)
+      return res.status(404).json({
+        message: "User not found",
+      });
+
+    res.clearCookie("token");
+
+    return res.status(200).json({
+      message: "User logged out",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error,
+    });
+  }
+};
+
 module.exports = {
   registerController,
   loginController,
+  logoutController,
 };
