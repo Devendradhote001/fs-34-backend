@@ -11,7 +11,7 @@ let authMiddleware = async (req, res, next) => {
       });
 
     let decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("decode->", decode);
+
 
     if (!decode)
       return res.status(401).json({

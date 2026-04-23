@@ -11,6 +11,11 @@ let userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+
     mobile: {
       type: String,
       required: true,
