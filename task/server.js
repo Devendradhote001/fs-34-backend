@@ -8,6 +8,10 @@ const cookieParser = require("cookie-parser");
 connectDB();
 
 const app = express();
+// body parser--
+app.use(express.urlencoded({ extended: true }));
+
+
 app.use(express.json());
 app.use(cookieParser());
 
