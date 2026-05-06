@@ -35,6 +35,31 @@ let createPostController = async (req, res) => {
   }
 };
 
+let getAllPostController = async (req, res) => {
+  try {
+    let allPosts = await PostModel.find();
+
+    if (!allPosts.length)
+      return res.status(204).json({
+        message: "Posts fetched successfully",
+        posts: allPosts,
+      });
+
+    // return res.status(200).json({
+    //   message: "posts fetched successfully",
+    //   posts: allPosts,
+    // });
+
+    return res.render("index.ejs", { posts: allPosts });
+  } catch (error) {
+    console.log("error in get post", error);
+    return res.status(500).json({
+      message: "internal server error",
+    });
+  }
+};
+
 module.exports = {
   createPostController,
+  getAllPostController,
 };
