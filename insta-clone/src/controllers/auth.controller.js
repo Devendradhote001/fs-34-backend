@@ -1,6 +1,7 @@
 const UserModel = require("../models/user.model");
 let jwt = require("jsonwebtoken");
 const sendMailTo = require("../services/mail.service");
+let bcrypt = require("bcrypt");
 
 let registerController = async (req, res) => {
   try {
@@ -156,9 +157,49 @@ let resetPasswordController = async (req, res) => {
   }
 };
 
+let updatePasswordController = async (req, res) => {
+  try {
+    let userId = req.params.userId;
+
+    if (!userId)
+      return res.status(400).json({
+        message: "Invalid request",
+      });
+
+    let { password } = req.body;
+
+    if (!password)
+      return res.status(400).json({
+        message: "Invalid request",
+      });
+
+    let hashPass = await bcrypt.hash(password, 10);
+
+    let updateUser = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        password: hashPass,
+      },
+      {
+        new: true,
+      }
+    );
+
+    return res.status(200).json({
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    console.log("error in UP api", error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   registerController,
   loginController,
   resetPasswordController,
   forgetPasswordController,
+  updatePasswordController,
 };
