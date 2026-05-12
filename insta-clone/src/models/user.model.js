@@ -27,6 +27,7 @@ let userSchema = new mongoose.Schema(
       maxlength: 10,
       trim: true,
     },
+    refreshToken: String,
     password: {
       type: String,
       required: true,
