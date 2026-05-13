@@ -1,5 +1,6 @@
 const PostModel = require("../models/post.model");
 const sendToIK = require("../services/storage.service");
+const ApiError = require("../utils/apiError");
 
 let createPostController = async (req, res) => {
   try {
@@ -56,6 +57,20 @@ let getAllPostController = async (req, res) => {
     return res.status(500).json({
       message: "internal server error",
     });
+  }
+};
+
+let getSinglePostController = async (req, res) => {
+  try {
+    let postId = req.params.postId;
+
+    let post = await PostModel.findById(postId);
+
+    if (!post) throw new Error("bhai galat hai");
+    res.send(post);
+  } catch (error) {
+    console.log("error in gsp", error);
+    throw new ApiError(500, "internal server error");
   }
 };
 
@@ -131,4 +146,5 @@ module.exports = {
   createPostController,
   getAllPostController,
   likesController,
+  getSinglePostController,
 };

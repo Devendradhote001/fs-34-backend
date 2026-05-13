@@ -3,6 +3,7 @@ const {
   createPostController,
   getAllPostController,
   likesController,
+  getSinglePostController,
 } = require("../controllers/post.controller");
 const upload = require("../config/multer");
 const authMiddleware = require("../middlewares/auth.middleware");
@@ -16,6 +17,7 @@ router.post(
 );
 
 router.get("/", getAllPostController);
+router.get("/:postId", getSinglePostController);
 
 router.get("/likes/:postId", authMiddleware, likesController);
 

@@ -5,6 +5,7 @@ let postRoutes = require("./routes/post.routes");
 let cookieParser = require("cookie-parser");
 let path = require("path");
 const sendMailTo = require("./services/mail.service");
+const errorMiddleware = require("./middlewares/error.middleware");
 
 connectDB();
 
@@ -17,7 +18,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 
+app.use(errorMiddleware);
 module.exports = app;
