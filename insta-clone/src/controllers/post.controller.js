@@ -1,78 +1,60 @@
 const PostModel = require("../models/post.model");
 const sendToIK = require("../services/storage.service");
 const ApiError = require("../utils/apiError");
+const ApiResponse = require("../utils/apiResponse");
+const asyncHandler = require("../utils/asyncHandler");
 
-let createPostController = async (req, res) => {
-  try {
-    let { caption } = req.body;
+let createPostController = asyncHandler(async (req, res) => {
+  let { caption } = req.body;
 
-    let images = req.files;
+  let images = req.files;
 
-    if (!images)
-      return res.status(400).json({
-        message: "Image is required",
-      });
-
-    let uploadedImages = await Promise.all(
-      images.map(async (elem) => {
-        return await sendToIK(elem.buffer, elem.originalname);
-      })
-    );
-
-    let newPost = await PostModel.create({
-      user_id: req.user._id,
-      caption,
-      imageUrl: uploadedImages.map((elem) => elem.url),
+  if (!images)
+    return res.status(400).json({
+      message: "Image is required",
     });
-    return res.status(201).json({
-      message: "Post created",
-      post: newPost,
-    });
-  } catch (error) {
-    console.log("error in create post", error);
-    return res.status(500).json({
-      message: "internal server error",
-    });
-  }
-};
 
-let getAllPostController = async (req, res) => {
-  try {
-    let allPosts = await PostModel.find().populate("likes");
+  let uploadedImages = await Promise.all(
+    images.map(async (elem) => {
+      return await sendToIK(elem.buffer, elem.originalname);
+    })
+  );
 
-    if (!allPosts.length)
-      return res.status(204).json({
-        message: "Posts fetched successfully",
-        posts: allPosts,
-      });
+  let newPost = await PostModel.create({
+    user_id: req.user._id,
+    caption,
+    imageUrl: uploadedImages.map((elem) => elem.url),
+  });
+  return res.status(201).json({
+    message: "Post created",
+    post: newPost,
+  });
+});
 
-    return res.status(200).json({
-      message: "posts fetched successfully",
+let getAllPostController = asyncHandler(async (req, res) => {
+  let allPosts = await PostModel.find().populate("likes");
+
+  if (!allPosts.length)
+    return res.status(204).json({
+      message: "Posts fetched successfully",
       posts: allPosts,
     });
 
-    // return res.render("index.ejs", { posts: allPosts });
-  } catch (error) {
-    console.log("error in get post", error);
-    return res.status(500).json({
-      message: "internal server error",
-    });
-  }
-};
+  return res
+    .status(200)
+    .json(new ApiResponse("post fetched successfully", allPosts));
 
-let getSinglePostController = async (req, res) => {
-  try {
-    let postId = req.params.postId;
+  // return res.render("index.ejs", { posts: allPosts });
+});
 
-    let post = await PostModel.findById(postId);
+let getSinglePostController = asyncHandler(async (req, res) => {
+  let postId = req.params.postId;
 
-    if (!post) throw new Error("bhai galat hai");
-    res.send(post);
-  } catch (error) {
-    console.log("error in gsp", error);
-    throw new ApiError(500, "internal server error");
-  }
-};
+  let post = await PostModel.findById(postId);
+
+  if (!post) throw new Error("bhai galat hai");
+  res.send(post);
+});
 
 let likesController = async (req, res) => {
   try {
